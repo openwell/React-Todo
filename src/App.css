@@ -1,0 +1,14 @@
+.App{
+    width: 500px;
+    height: auto;
+    margin: 0 auto;
+    background: grey;
+    padding: 20px;
+}
+li{
+    list-style: none;
+    line-height: 20px;
+}
+h1{
+    color: whitesmoke;
+}
