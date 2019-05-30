@@ -25,10 +25,14 @@ class App extends React.Component {
         completed: false
       }
     ];
-    localStorage.setItem("myCat", JSON.stringify(me));
-    let mee = localStorage.getItem("myCat");
-    let josh = JSON.parse(mee);
-    this.setState({ store: josh });
+    if (localStorage.getItem("myCat") === null) {
+      localStorage.setItem("myCat", JSON.stringify(me));
+      this.setState({ store: me });
+    }else{
+      let mee = localStorage.getItem("myCat");
+      let josh = JSON.parse(mee);
+      this.setState({ store: josh });
+    }
   }
 
   onChangeHandler = event => {
@@ -64,10 +68,16 @@ class App extends React.Component {
     const newState = [...this.state.store];
     let patchState = newState.map(element => {
       if (element["id"] === event) {
-        element.completed = !element.completed
+        element.completed = !element.completed;
       }
       return element;
     });
+    this.setState({ store: patchState });
+  };
+  onDeleteHandler = event => {
+    event.preventDefault();
+    const newState = [...this.state.store];
+    let patchState = newState.filter(elem => elem["completed"] !== true);
     this.setState({ store: patchState });
   };
   // you will need a place to store your state in this component.
@@ -87,6 +97,7 @@ class App extends React.Component {
           value={this.state.data}
           search={this.onSearchHandler}
           outOfFocus={this.onFocusHandler}
+          delete={this.onDeleteHandler}
         />
         <TodoList todoData={this.state.search} />
       </div>
