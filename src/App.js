@@ -25,10 +25,14 @@ class App extends React.Component {
         completed: false
       }
     ];
-    localStorage.setItem("myCat", JSON.stringify(me));
-    let mee = localStorage.getItem("myCat");
-    let josh = JSON.parse(mee);
-    this.setState({ store: josh });
+    if (localStorage.getItem("myCat") === null) {
+      localStorage.setItem("myCat", JSON.stringify(me));
+      this.setState({ store: me });
+    }else{
+      let mee = localStorage.getItem("myCat");
+      let josh = JSON.parse(mee);
+      this.setState({ store: josh });
+    }
   }
 
   onChangeHandler = event => {
@@ -57,9 +61,25 @@ class App extends React.Component {
     );
     this.setState({ search: filteredStore });
   };
-  onFocusHandler =()=>{
-      this.setState({ search: [] });
-  }
+  onFocusHandler = () => {
+    this.setState({ search: [] });
+  };
+  onCompleteHandler = event => {
+    const newState = [...this.state.store];
+    let patchState = newState.map(element => {
+      if (element["id"] === event) {
+        element.completed = !element.completed;
+      }
+      return element;
+    });
+    this.setState({ store: patchState });
+  };
+  onDeleteHandler = event => {
+    event.preventDefault();
+    const newState = [...this.state.store];
+    let patchState = newState.filter(elem => elem["completed"] !== true);
+    this.setState({ store: patchState });
+  };
   // you will need a place to store your state in this component.
   // design `App` to be the parent component of your application.
   // this component is going to take care of state, and any change handlers you need to work with your state
@@ -67,13 +87,17 @@ class App extends React.Component {
     return (
       <div className="App">
         <h1>TODO APP</h1>
-        <TodoList todoData={this.state.store} />
+        <TodoList
+          todoData={this.state.store}
+          completed={this.onCompleteHandler}
+        />
         <TodoForm
           change={this.onChangeHandler}
           submit={this.onSubmitHandler}
           value={this.state.data}
           search={this.onSearchHandler}
           outOfFocus={this.onFocusHandler}
+          delete={this.onDeleteHandler}
         />
         <TodoList todoData={this.state.search} />
       </div>
